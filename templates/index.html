@@ -1,0 +1,64 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>{% block title %} Add a New Message {% endblock %}</h1>
+<form method="post">
+    <label for="key">API Key</label>
+    <br>
+    <input type="text" name="key"
+           placeholder="Your API Key"
+           value="{{ request.form['key'] }}"></input>
+    <br
+    <button type="submit">Submit</button>
+</form>
+
+<h1>Image-upload with previews</h1>
+<div class="wrapper">
+  <form method="POST" enctype="multipart/form-data">
+    <div class="box">
+      <div class="js--image-preview"></div>
+      <div class="upload-options">
+        <label>
+          <input type="file" name="file" class="image-upload" accept="image/*" />
+        </label>
+      </div>
+    </div>
+    <button type="submit">Upload</button>
+  </form>
+</div>
+
+{% if filename %}
+<div>
+  <h3>Uploaded Image:</h3>
+  <img src="{{ url_for('static', filename='uploads/' ~ filename) }}" alt="Uploaded Image">
+  <br>
+</div>
+{% endif %}
+
+{% if result %}
+
+<div>
+  <h2>Extracted Information:</h2>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for key, value in result.items() %}
+      <tr>
+        <td>{{ key }}</td>
+        <td>{{ value }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endif %}
+
+{% endblock %}
