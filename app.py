@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 import os
-
+from dotenv import load_dotenv  
 from openai import OpenAI
 import base64
 
@@ -68,7 +68,10 @@ def extract(image_path, img_format):
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = '5dfa9013127e1804bc4fd7054367ec0afb46cf03a086a795'
+# Load environment variables
+load_dotenv()
+
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 
 # Configure the upload folder and allowed extensions
@@ -84,7 +87,7 @@ def hello_world():
     global client
 
     if request.method == 'POST':
-        key = request.form['key']
+        key = request.form.get('key')
 
         if not key:
             flash('key is required!')

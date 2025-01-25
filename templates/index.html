@@ -1,20 +1,30 @@
-
 {% extends "base.html" %}
 
 {% block content %}
 
-<h1>{% block title %} Add a New Message {% endblock %}</h1>
-<form method="post">
-    <label for="key">API Key</label>
+<h1>Welcome to AI NutriGuide!</h1>
+<p>Your personal AI-powered nutrition assistant is here!</p>
+<ul class="features">
+  <li><strong>Quick and Easy</strong> – Get the detailed nutritional analysis in seconds.</li>
+  <li><strong>Stay Informed</strong> – Understand what you're eating like never before.</li>
+  <li><strong>Empower Your Choices</strong> – Make smarter dietary decisions effortlessly.</li>
+</ul>
+<p>Let’s decode the food you eat and guide you toward a healthier lifestyle!</p>
+
+<div class="intro-container">
+  <form method="post">
+    <h3>Try it now!</h3>
+    <label for="key">Enter your API Key</label>
     <br>
     <input type="text" name="key"
            placeholder="Your API Key"
-           value="{{ request.form['key'] }}"></input>
-    <br
+           value="{{ request.form['key'] }}">
+    <br>
     <button type="submit">Submit</button>
-</form>
+  </form>
+</div>
 
-<h1>Image-upload with previews</h1>
+<h1 class="upload-heading">Image-upload with previews</h1>
 <div class="wrapper">
   <form method="POST" enctype="multipart/form-data">
     <div class="box">
@@ -25,40 +35,63 @@
         </label>
       </div>
     </div>
-    <button type="submit">Upload</button>
+    <button class="upload-button" type="submit">Upload</button>
   </form>
 </div>
 
-{% if filename %}
-<div>
-  <h3>Uploaded Image:</h3>
-  <img src="{{ url_for('static', filename='uploads/' ~ filename) }}" alt="Uploaded Image">
-  <br>
+<div class="container">
+  {% if filename %}
+  <div class="left-section">
+    <h2 class="uploaded-image">Uploaded Image:</h2>
+    <img src="{{ url_for('static', filename='uploads/' ~ filename) }}" alt="Uploaded Image">
+  </div>
+  {% endif %}
+
+  {% if result %}
+  <div class="right-section">
+    <h2 class="extracted-info">Extracted Information:</h2>
+    <div class="table-container">
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% set half = result|length // 2 %}
+        {% for key, value in result.items() %}
+            {% if loop.index0 < half %}
+            <tr>
+              <td>{{ key }}</td>
+              <td>{{ value }}</td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+    
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for key, value in result.items() %}
+            {% if loop.index0 >= half %}
+            <tr>
+              <td>{{ key }}</td>
+              <td>{{ value }}</td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+  {% endif %}
 </div>
-{% endif %}
 
-{% if result %}
-
-<div>
-  <h2>Extracted Information:</h2>
-  <table border="1">
-    <thead>
-      <tr>
-        <th>Field</th>
-        <th>Value</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for key, value in result.items() %}
-      <tr>
-        <td>{{ key }}</td>
-        <td>{{ value }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-
-{% endif %}
-
-{% endblock %}
+{% endblock %} 
