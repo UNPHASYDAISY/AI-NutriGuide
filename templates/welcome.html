@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome to AI NutriGuide!</h1>
+<p>Your personal AI-powered nutrition assistant is here!</p>
+<ul class="features">
+    <li><strong>Quick and Easy</strong> – Get the detailed nutritional analysis in seconds.</li>
+    <li><strong>Stay Informed</strong> – Understand what you're eating like never before.</li>
+    <li><strong>Empower Your Choices</strong> – Make smarter dietary decisions effortlessly.</li>
+</ul>
+<p>Let’s decode the food you eat and guide you toward a healthier lifestyle!</p>
+<div class="intro-container">
+    <form method="post">
+        <h3>Try it now!</h3>
+        <label for="key">Enter your API Key</label>
+        <br>
+        <input type="text" name="key" placeholder="Your API Key">
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+{% endblock %}

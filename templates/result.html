@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    {% if filename %}
+    <div class="left-section">
+      <h2 class="uploaded-image">Uploaded Image:</h2>
+      <img src="{{ url_for('static', filename='uploads/' ~ filename) }}" alt="Uploaded Image">
+</div>
+    {% endif %}
+  
+    {% if result %}
+    <div class="right-section">
+      <h2 class="extracted-info">Extracted Information:</h2>
+      <div class="table-container">
+      <table border="1">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set half = result|length // 2 %}
+          {% for key, value in result.items() %}
+              {% if loop.index0 < half %}
+              <tr>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+              </tr>
+              {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+      
+      <table border="1">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key, value in result.items() %}
+              {% if loop.index0 >= half %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+              </tr>
+              {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  
+  {% endblock %}
+  

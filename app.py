@@ -1,10 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 import os
-from dotenv import load_dotenv  
+from dotenv import load_dotenv
 from openai import OpenAI
 import base64
-
 import json
 
 endpoint = "https://models.inference.ai.azure.com"
@@ -15,7 +14,7 @@ client = None
 
 def get_image_data_url(image_file: str, image_format: str) -> str:
     """
-    Helper function to converts an image file to a data URL string.
+    Helper function to convert an image file to a data URL string.
 
     Args:
         image_file (str): The path to the image file.
@@ -38,7 +37,7 @@ def extract(image_path, img_format):
     Output the result as a raw JSON string as follows:
     food name: [food name], serving size: [value], calories: [value], added sugars: [value], biotin: [value], calcium: [value], chloride: [value], choline: [value], cholesterol: [value], chromium: [value], copper: [value], dietary fiber: [value], fat: [value], folate/folic acid: [value], iodine: [value], iron: [value], magnesium: [value], manganese: [value], molybdenum: [value], niacin: [value], pantothenic acid: [value], phosphorus: [value], potassium: [value], protein: [value], riboflavin: [value], saturated fat: [value], selenium: [value], sodium: [value], thiamin: [value], total carbohydrate: [value], vitamin A: [value], vitamin B6: [value], vitamin B12: [value], vitamin C: [value], vitamin D: [value], vitamin E: [value], vitamin K: [value], zinc: [value]
     
-    Don't use ```json ``` or any other code block formatting. Just the raw JSON string."""
+    Don't use json or any other code block formatting. Just the raw JSON string."""
 
     # Generate response
     response = client.chat.completions.create(
@@ -51,13 +50,13 @@ def extract(image_path, img_format):
                 "role": "user",
                 "content": [
                     {"type": "text", "text": prompt},
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": get_image_data_url(image_path, img_format),
-                                "detail": "low"
-                            },
-                        }
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": get_image_data_url(image_path, img_format),
+                            "detail": "low"
+                        },
+                    }
                 ],
             },
         ],
@@ -65,14 +64,12 @@ def extract(image_path, img_format):
     )
     return response.choices[0].message.content
 
-
 app = Flask(__name__)
 
 # Load environment variables
 load_dotenv()
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-
 
 # Configure the upload folder and allowed extensions
 UPLOAD_FOLDER = 'static/uploads/'
@@ -82,42 +79,50 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/', methods=['POST', 'GET'])
-def hello_world():
+@app.route('/', methods=['GET', 'POST'])
+def welcome():
     global client
-
     if request.method == 'POST':
         key = request.form.get('key')
-
         if not key:
-            flash('key is required!')
+            flash('API key is required!')
         else:
-            API_KEY = key
             client = OpenAI(
                 base_url=endpoint,
-                api_key=API_KEY,
+                api_key=key,
             )
-            return render_template('index.html')
+            return redirect(url_for('upload'))
+    return render_template('welcome.html')
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    if request.method == 'POST':
         # Check if the post request has the file part
         if 'file' not in request.files:
-            return 'No file part'
+            flash('No file part!')
+            return redirect(request.url)
+
         file = request.files['file']
+
         # If the user does not select a file, the browser submits an empty file without a filename
         if file.filename == '':
-            return 'No selected file'
+            flash('No selected file!')
+            return redirect(request.url)
+
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            # Process the uploaded image here
-            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            result = extract(image_path, 'jpg')
-            result = json.loads(result)
-            return render_template('index.html', filename=filename, result=result)
-    return render_template('index.html')
 
-def process_image(filepath):
-    # Add your image processing code here
-    print(f'Processing image: {filepath}')
+            # Redirect to result page with the filename
+            return redirect(url_for('result', filename=filename))
+    return render_template('upload.html')
+
+@app.route('/result/<filename>')
+def result(filename):
+    image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    result = extract(image_path, 'jpg')
+    result = json.loads(result)
+    return render_template('result.html', filename=filename, result=result)
 
 if __name__ == '__main__':
     app.run(debug=True)
