@@ -11,6 +11,13 @@
     {% if result %}
     <div class="right-section">
       <h2 class="extracted-info">Extracted Information:</h2>
+      <div> 
+        <h3>Food Name: {{ result.food_name }}</h3>
+        <h3>Food uses: {{ result.food_uses }}</h3>
+        <h3>Recommended Age Group: {{ result.recommended_age_group }}</h3>
+        <h3>Pros: {{ result.pros }}</h3>
+        <h3>Cons: {{ result.cons }}</h3>
+      </div>
       <div class="table-container">
       <table border="1">
         <thead>
@@ -20,14 +27,13 @@
           </tr>
         </thead>
         <tbody>
-          {% set half = result|length // 2 %}
-          {% for key, value in result.items() %}
-              {% if loop.index0 < half %}
-              <tr>
-                <td>{{ key }}</td>
-                <td>{{ value }}</td>
-              </tr>
-              {% endif %}
+          {% set items = result.items()|list %}
+          {% set half = (items|length - 5) // 2 %}
+          {% for key, value in items[5:5 + half] %}
+          <tr>
+            <td>{{ key }}</td>
+            <td>{{ value }}</td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
@@ -40,13 +46,11 @@
           </tr>
         </thead>
         <tbody>
-          {% for key, value in result.items() %}
-              {% if loop.index0 >= half %}
-            <tr>
-                <td>{{ key }}</td>
-                <td>{{ value }}</td>
-              </tr>
-              {% endif %}
+          {% for key, value in items[5 + half:] %}
+          <tr>
+            <td>{{ key }}</td>
+            <td>{{ value }}</td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
@@ -55,5 +59,4 @@
     {% endif %}
   </div>
   
-  {% endblock %}
-  
+{% endblock %}
