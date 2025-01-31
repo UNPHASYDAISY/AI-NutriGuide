@@ -5,12 +5,58 @@ from dotenv import load_dotenv
 from openai import OpenAI
 import base64
 import json
+from pydantic import BaseModel
 
-endpoint = "https://models.inference.ai.azure.com"
-model_name = "gpt-4o"
+endpoint = "https://generativelanguage.googleapis.com/v1beta/openai/"
+model_name = "gemini-1.5-flash"
 
 # Initialize OpenAI client
 client = None
+
+class NutritionInfo(BaseModel):
+    food_name: str
+    food_uses: str
+    recommended_age_group: str
+    pros: str
+    cons: str
+    serving_size: str
+    calories: str
+    added_sugars: str
+    biotin: str
+    calcium: str
+    chloride: str
+    choline: str
+    cholesterol: str
+    chromium: str
+    copper: str 
+    dietary_fiber: str
+    fat: str
+    folate_folic_acid: str 
+    iodine: str
+    iron: str 
+    magnesium: str 
+    manganese: str
+    molybdenum: str 
+    niacin: str
+    pantothenic_acid: str 
+    phosphorus: str
+    potassium: str
+    protein: str 
+    riboflavin: str
+    saturated_fat: str 
+    selenium: str 
+    sodium: str 
+    thiamin: str
+    total_carbohydrate: str 
+    vitamin_A: str
+    vitamin_B6: str
+    vitamin_B12: str
+    vitamin_C: str
+    vitamin_D: str 
+    vitamin_E: str 
+    vitamin_K: str 
+    zinc: str
+    
 
 def get_image_data_url(image_file: str, image_format: str) -> str:
     """
@@ -32,15 +78,10 @@ def get_image_data_url(image_file: str, image_format: str) -> str:
     return f"data:image/{image_format};base64,{image_data}"
 
 def extract(image_path, img_format):
-    prompt = """Extract text from this nutrition facts label using OCR. If the food name is missing, predict it based on the nutritional values. Make sure to use the correct unit value. Replace any missing values with 0g.
-
-    Output the result as a raw JSON string as follows:
-    food name: [food name], serving size: [value], calories: [value], added sugars: [value], biotin: [value], calcium: [value], chloride: [value], choline: [value], cholesterol: [value], chromium: [value], copper: [value], dietary fiber: [value], fat: [value], folate/folic acid: [value], iodine: [value], iron: [value], magnesium: [value], manganese: [value], molybdenum: [value], niacin: [value], pantothenic acid: [value], phosphorus: [value], potassium: [value], protein: [value], riboflavin: [value], saturated fat: [value], selenium: [value], sodium: [value], thiamin: [value], total carbohydrate: [value], vitamin A: [value], vitamin B6: [value], vitamin B12: [value], vitamin C: [value], vitamin D: [value], vitamin E: [value], vitamin K: [value], zinc: [value]
-    
-    Don't use json or any other code block formatting. Just the raw JSON string."""
+    prompt = """Extract text from this nutrition facts label using OCR. If the food name is missing, predict it based on the nutritional values. Give the food uses, its recommended age group, its pros and its cons. Make sure to use the correct unit value. Replace any missing values with 0g."""
 
     # Generate response
-    response = client.chat.completions.create(
+    response = client.beta.chat.completions.parse(
         messages=[
             {
                 "role": "system",
@@ -60,9 +101,10 @@ def extract(image_path, img_format):
                 ],
             },
         ],
+        response_format=NutritionInfo,
         model=model_name
     )
-    return response.choices[0].message.content
+    return response.choices[0].message.parsed
 
 app = Flask(__name__)
 
@@ -121,7 +163,8 @@ def upload():
 def result(filename):
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     result = extract(image_path, 'jpg')
-    result = json.loads(result)
+    result_json = json.dumps(result, default=lambda o:o.__dict__)
+    result = json.loads(result_json)
     return render_template('result.html', filename=filename, result=result)
 
 if __name__ == '__main__':
