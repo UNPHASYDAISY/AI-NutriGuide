@@ -106,7 +106,7 @@ def extract(image_path, img_format):
     )
     return response.choices[0].message.parsed
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 # Load environment variables
 load_dotenv()
@@ -167,5 +167,5 @@ def result(filename):
     result = json.loads(result_json)
     return render_template('result.html', filename=filename, result=result)
 
-if _name_ == '_main_':
+if _name_ == '__main__':
     app.run(debug=True)
