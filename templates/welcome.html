@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Welcome to AI NutriGuide!</h1>
+<h1 class="welcome-title">Welcome to Nutrilytics!</h1>
 <p>Your personal AI-powered nutrition assistant is here!</p>
 <ul class="features">
     <li><strong>Quick and Easy</strong> – Get the detailed nutritional analysis in seconds.</li>
@@ -8,14 +8,21 @@
     <li><strong>Empower Your Choices</strong> – Make smarter dietary decisions effortlessly.</li>
 </ul>
 <p>Let’s decode the food you eat and guide you toward a healthier lifestyle!</p>
-<div class="intro-container">
+  
+  <div class="intro-container">
     <form method="post">
-        <h3>Try it now!</h3>
-        <label for="key">Enter your API Key</label>
-        <br>
-        <input type="text" name="key" placeholder="Your API Key">
-        <br>
-        <button type="submit">Submit</button>
+      <h3>Try it now!</h3>
+      <label for="key">Enter your Gemini API Key</label>
+      <br>
+      <p class="api-message">Don't have an API key yet? <a href="https://aistudio.google.com/apikey" target="_blank">Click here</a></p>
+      <br>
+      <input type="text" name="key" placeholder="Your API Key">
+      <br>
+      <button type="submit">Submit</button>
+      {% if error %}
+      <p class="error">Enter a valid API Key</p>
+      {% endif %}
     </form>
-</div>
+  </div>
+  
 {% endblock %}
