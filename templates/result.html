@@ -1,23 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container">
+<h1 class="result-heading">Nutrilytics</h1>
+<p class="result-subheading">Your results are ready!</p>
+<div class="result-container">
     {% if filename %}
     <div class="left-section">
-      <h2 class="uploaded-image">Uploaded Image:</h2>
+      <h2 class="uploaded-image"> </h2>
       <img src="{{ url_for('static', filename='uploads/' ~ filename) }}" alt="Uploaded Image">
-</div>
+    </div>
     {% endif %}
   
     {% if result %}
     <div class="right-section">
-      <h2 class="extracted-info">Extracted Information:</h2>
-      <div> 
-        <h3>Food Name: {{ result.food_name }}</h3>
-        <h3>Food uses: {{ result.food_uses }}</h3>
-        <h3>Recommended Age Group: {{ result.recommended_age_group }}</h3>
-        <h3>Pros: {{ result.pros }}</h3>
-        <h3>Cons: {{ result.cons }}</h3>
-      </div>
+      <h2 class="extracted-info"> </h2>
       <div class="table-container">
       <table border="1">
         <thead>
@@ -28,29 +23,13 @@
         </thead>
         <tbody>
           {% set items = result.items()|list %}
-          {% set half = (items|length - 5) // 2 %}
-          {% for key, value in items[5:5 + half] %}
+          {% for key, value in items[5:] %}
+          {% if value != '0g' and value != '0mcg' and value != '0mg' %}
           <tr>
             <td>{{ key }}</td>
             <td>{{ value }}</td>
           </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Field</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for key, value in items[5 + half:] %}
-          <tr>
-            <td>{{ key }}</td>
-            <td>{{ value }}</td>
-          </tr>
+          {% endif %}
           {% endfor %}
         </tbody>
       </table>
@@ -58,5 +37,20 @@
     </div>
     {% endif %}
   </div>
-  
+
+<div class="result-container-2">
+  <h2 class="extracted-info">Extracted Information:</h2>
+      <div> 
+        <h3 class="extracted-info-h">Food Name:</h3>
+        <p class="extracted-info-p">{{ result.food_name }}</p>
+        <h3 class="extracted-info-h">Food uses:</h3>
+        <p class="extracted-info-p"> {{ result.food_uses }}</p>
+        <h3 class="extracted-info-h">Recommended Age Group:</h3>
+        <p class="extracted-info-p"> {{ result.recommended_age_group }}</p>
+        <h3 class="extracted-info-h">Pros:</h3>
+        <p class="extracted-info-p"> {{ result.pros }}</p>
+        <h3 class="extracted-info-h">Cons:</h3>
+        <p class="extracted-info-p"> {{ result.cons }}</p>
+      </div>
+</div> 
 {% endblock %}
