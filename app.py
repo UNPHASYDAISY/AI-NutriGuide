@@ -78,7 +78,7 @@ def get_image_data_url(image_file: str, image_format: str) -> str:
     return f"data:image/{image_format};base64,{image_data}"
 
 def extract(image_path, img_format):
-    prompt = """Extract text from this nutrition facts label using OCR. If the food name is missing, predict it based on the nutritional values. Give the food uses, its recommended age group, its pros and its cons. Make sure to use the correct unit value. Replace any missing values with 0g."""
+    prompt = """Extract text from this nutrition facts label using OCR. If the food name is missing, predict it based on the nutritional values. Give the food uses, its recommended age group, its pros and its cons. Make sure to use the correct unit value. Replace any missing values with 0g or 0mcg or 0mg."""
 
     # Generate response
     response = client.beta.chat.completions.parse(
@@ -126,8 +126,8 @@ def welcome():
     global client
     if request.method == 'POST':
         key = request.form.get('key')
-        if not key:
-            flash('API key is required!')
+        if key is None or not key.startswith('AI') or len(key) != 39:
+            return render_template('welcome.html', error=True)
         else:
             client = OpenAI(
                 base_url=endpoint,
