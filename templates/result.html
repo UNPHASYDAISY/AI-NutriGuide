@@ -26,7 +26,11 @@
           {% for key, value in items[5:] %}
           {% if value != '0g' and value != '0mcg' and value != '0mg' %}
           <tr>
+<<<<<<< HEAD
             <td>{{ key.replace('_', ' ').title() }}</td>
+=======
+            <td>{{ key }}</td>
+>>>>>>> c5623028fd23a1b203e9ebed6def673cb4644841
             <td>{{ value }}</td>
           </tr>
           {% endif %}
@@ -38,6 +42,7 @@
     {% endif %}
   </div>
 
+<<<<<<< HEAD
   <div class="result-container-2">
     <h2 class="extracted-info">Extracted Information</h2>
     <div class="info-card">
@@ -50,3 +55,21 @@
   </div>
    
 {% endblock %}
+=======
+<div class="result-container-2">
+  <h2 class="extracted-info">Extracted Information:</h2>
+      <div> 
+        <h3 class="extracted-info-h">Food Name:</h3>
+        <p class="extracted-info-p">{{ result.food_name }}</p>
+        <h3 class="extracted-info-h">Food uses:</h3>
+        <p class="extracted-info-p"> {{ result.food_uses }}</p>
+        <h3 class="extracted-info-h">Recommended Age Group:</h3>
+        <p class="extracted-info-p"> {{ result.recommended_age_group }}</p>
+        <h3 class="extracted-info-h">Pros:</h3>
+        <p class="extracted-info-p"> {{ result.pros }}</p>
+        <h3 class="extracted-info-h">Cons:</h3>
+        <p class="extracted-info-p"> {{ result.cons }}</p>
+      </div>
+</div> 
+{% endblock %}
+>>>>>>> c5623028fd23a1b203e9ebed6def673cb4644841
