@@ -163,18 +163,9 @@ def upload():
 def result(filename):
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     result = extract(image_path, 'jpg')
-<<<<<<< HEAD
     result_json = json.dumps(result, default=lambda o:o.__dict__)
     result = json.loads(result_json)
     return render_template('result.html', filename=filename, result=result)
 
 if __name__ == '__main__':
     app.run(debug=True)
-=======
-    result_json = json.dumps(result, default=lambda o:o._dict_)
-    result = json.loads(result_json)
-    return render_template('result.html', filename=filename, result=result)
-
-if _name_ == '__main__':
-    app.run(debug=True)
->>>>>>> c5623028fd23a1b203e9ebed6def673cb4644841

@@ -26,11 +26,7 @@
           {% for key, value in items[5:] %}
           {% if value != '0g' and value != '0mcg' and value != '0mg' %}
           <tr>
-<<<<<<< HEAD
             <td>{{ key.replace('_', ' ').title() }}</td>
-=======
-            <td>{{ key }}</td>
->>>>>>> c5623028fd23a1b203e9ebed6def673cb4644841
             <td>{{ value }}</td>
           </tr>
           {% endif %}
